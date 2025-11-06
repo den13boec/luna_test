@@ -1,3 +1,4 @@
+from typing import Sequence
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models.activity import Activity
@@ -7,7 +8,7 @@ def get_activity(db: Session, activity_id: int) -> Activity | None:
     return db.get(Activity, activity_id)
 
 
-def list_activities(db: Session):
+def list_activities(db: Session) -> Sequence[Activity]:
     return db.execute(select(Activity).order_by(Activity.id)).scalars().all()
 
 

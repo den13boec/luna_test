@@ -1,3 +1,4 @@
+from typing import Any, Sequence
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
 from app.models.organization import Organization
@@ -10,7 +11,7 @@ def get_org(db: Session, org_id: int) -> Organization | None:
     return db.get(Organization, org_id)
 
 
-def list_by_building(db: Session, building_id: int):
+def list_by_building(db: Session, building_id: int) -> Sequence[Organization]:
     stmt = (
         select(Organization)
         .where(Organization.building_id == building_id)
@@ -19,7 +20,7 @@ def list_by_building(db: Session, building_id: int):
     return db.execute(stmt).scalars().all()
 
 
-def search_by_name(db: Session, q: str):
+def search_by_name(db: Session, q: str) -> Sequence[Organization]:
     q_like = f"%{q}%"
     stmt = (
         select(Organization)
@@ -29,7 +30,9 @@ def search_by_name(db: Session, q: str):
     return db.execute(stmt).scalars().all()
 
 
-def list_by_activity_ids(db: Session, activity_ids: list[int]):
+def list_by_activity_ids(
+    db: Session, activity_ids: list[int]
+) -> list[Any] | Sequence[Organization]:
     if not activity_ids:
         return []
     stmt = (
@@ -43,7 +46,7 @@ def list_by_activity_ids(db: Session, activity_ids: list[int]):
 
 def list_in_rectangle(
     db: Session, lat_min: float, lat_max: float, lon_min: float, lon_max: float
-):
+) -> Sequence[Organization]:
     stmt = (
         select(Organization)
         .join(Building, Organization.building_id == Building.id)
@@ -60,7 +63,9 @@ def list_in_rectangle(
     return db.execute(stmt).scalars().all()
 
 
-def list_in_radius(db: Session, lat: float, lon: float, radius_km: float):
+def list_in_radius(
+    db: Session, lat: float, lon: float, radius_km: float
+) -> Sequence[Organization]:
     dist_expr = haversine_km(lat, lon, Building.latitude, Building.longitude)
     stmt = (
         select(Organization)
