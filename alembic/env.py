@@ -10,11 +10,12 @@ from app.core.config import settings
 from app.db.base import Base
 
 # ensure tables are included in Base.metadata (for alembic)
-from app.models.activity import Activity # noqa
-from app.models.building import Building # noqa
-from app.models.organization import Organization # noqa
-from app.models.phone import Phone # noqa
-from app.models.org_activity import org_activity  # noqa
+from app import models # noqa
+# from app.models.activity import Activity # noqa
+# from app.models.building import Building # noqa
+# from app.models.organization import Organization # noqa
+# from app.models.phone import Phone # noqa
+# from app.models.org_activity import org_activity  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
