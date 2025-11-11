@@ -12,6 +12,12 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=list[BuildingOut])
+@router.get(
+    "",
+    response_model=list[BuildingOut],
+    summary="Список зданий",
+    description="Возвращает полный список зданий.",
+    responses={401: {"description": "Invalid or missing API key"}},
+)
 def get_buildings(db: Session = Depends(get_db)) -> Sequence[Building]:
     return list_buildings(db)
