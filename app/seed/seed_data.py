@@ -294,7 +294,6 @@ def ensure_data(db: Session) -> None:
         for k in dict.fromkeys(act_keys):
             org.activities.append(ACT[k]) if ACT[k] not in org.activities else None
         # phones
-        upsert_phone(db, org, make_phone(idx, 0))
         for j in range(phones_cnt):
             upsert_phone(db, org, make_phone(idx, j))
         created_orgs.append(org)
