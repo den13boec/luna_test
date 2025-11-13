@@ -9,7 +9,7 @@ from app.utils.geo import bbox_condition, haversine_km
 
 def get_org(db: Session, org_id: int) -> Organization | None:
     """Организация по id."""
-    return db.get_one(Organization, org_id)
+    return db.get(Organization, org_id)
 
 
 def list_by_building(db: Session, building_id: int) -> Sequence[Organization]:
@@ -45,29 +45,35 @@ def list_by_activity_ids(
         .where(org_activity.c.activity_id.in_(activity_ids))
         .order_by(Organization.id)
     )
-    return db.execute(stmt).scalars().all()
+    return db.execute(stmt).unique().scalars().all()
 
 
 def list_in_rectangle(
-    db: Session, min_lon: float, min_lat: float, max_lon: float, max_lat: float
+    db: Session,
+    lat_min: float,
+    lat_max: float,
+    lon_min: float,
+    lon_max: float,
 ) -> Sequence[Organization]:
     """Поиск организаций в прямоугольнике по координатам."""
     stmt = (
         select(Organization)
         .join(Building, Building.id == Organization.building_id)
+        # Порядок параметров bbox_condition:
+        # (lon_col, lat_col, min_lon, min_lat, max_lon, max_lat)
         .where(
             bbox_condition(
                 Building.longitude,
                 Building.latitude,
-                min_lon,
-                min_lat,
-                max_lon,
-                max_lat,
+                lon_min,
+                lat_min,
+                lon_max,
+                lat_max,
             )
         )
         .order_by(Organization.id)
     )
-    return db.execute(stmt).scalars().all()
+    return db.execute(stmt).unique().scalars().all()
 
 
 def list_in_radius(
